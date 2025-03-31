@@ -1,0 +1,57 @@
+experiment:
+  name: "GCS_training"
+  log_dir: "logs"
+  output_dir: "output"
+  checkpoint_dir: "checkpoints"
+  seed: 42
+  debug: false
+
+data:
+  k_file: "data_generation/src/rescaled_200_fields.h5"
+  states_dir: "data_generation/src/"
+  vjp_dir: "data_generation/src/num_ev_8" 
+  eigvec_dir: "data_generation/src/num_ev_8"
+  num_train: 64
+  num_test: 8
+  nt: 5
+  nx: 256
+  ny: 256
+  num_vec: 8
+
+model:
+  in_channels: 1
+  out_channels: 1
+  decoder_layer_size: 128
+  num_fno_layers: 6
+  num_fno_modes: [3, 64, 64]
+  padding: 3
+  dimension: 3
+  latent_channels: 32
+
+training:
+  loss_type: "JAC"  # Using standard MSE loss (technically L2 bc I changed it) / "JAC" for Jacobian regularization
+  reg_param: 0.5 # not used for MSE
+  scale_factor: 5500.0 # not used for MSE
+  batch_size: 1
+  accum_steps: 1
+  num_workers: 4
+  learning_rate: 1e-3
+  weight_decay: 5e-4
+  num_epoch: 50
+  check_val_every_n_epoch: 1
+
+  # Checkpointing stuff
+  enable_checkpointing: true
+  log_checkpoint: false # log to neptune (cloud)
+  checkpoint_interval: 1
+  save_top_k: 1
+
+visualization:
+  plot_interval: 5
+  save_to_disk: true
+  log_to_neptune: true
+  num_plots: 2
+
+neptune:
+  enabled: true
+  project: "slim-gatech/DeFINO"

@@ -1,0 +1,58 @@
+experiment:
+  name: "GCS_JAC_training"
+  log_dir: "logs"
+  output_dir: "output"
+  checkpoint_dir: "checkpoints"
+  seed: 42
+  debug: false
+
+data:
+  k_file: "data_generation/src/rescaled_200_fields.h5"
+  states_dir: "data_generation/src/"
+  # These are required for JAC loss
+  vjp_dir: "data_generation/src/num_ev_8"
+  eigvec_dir: "data_generation/src/num_ev_8"
+  num_train: 64
+  num_test: 8
+  nt: 5
+  nx: 256
+  ny: 256
+  num_vec: 8  # Number of eigenvectors to use for VJP calculation
+
+model:
+  in_channels: 1
+  out_channels: 1
+  decoder_layer_size: 128
+  num_fno_layers: 6
+  num_fno_modes: [4, 30, 30]
+  padding: 3
+  dimension: 3
+  latent_channels: 64
+
+training:
+  loss_type: "JAC"     # Using Jacobian regularization
+  reg_param: 0.01      # Weight for Jacobian regularization term
+  scale_factor: 5500.0 # Scaling factor for Jacobian loss 
+  batch_size: 1
+  accum_steps: 1
+  num_workers: 4
+  learning_rate: 1e-3
+  weight_decay: 5e-4
+  num_epoch: 200
+  check_val_every_n_epoch: 10
+
+  # Checkpointing stuff
+  enable_checkpointing: true
+  log_checkpoint: false # log to neptune (cloud)
+  checkpoint_interval: 1
+  save_top_k: 1
+
+visualization:
+  plot_interval: 5
+  save_to_disk: true
+  log_to_neptune: false
+
+neptune:
+  enabled: false
+  project: "your-neptune-project"
+  api_token: null 

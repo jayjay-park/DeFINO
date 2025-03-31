@@ -1,4 +1,4 @@
-name: py311_env
+name: defino-env
 channels:
   - defaults
 dependencies:
